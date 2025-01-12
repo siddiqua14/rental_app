@@ -1,0 +1,254 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f2f2f2;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+
+
+.properties-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Creates 3 equal-width columns */
+    gap: 20px; /* Adds space between the cards */
+    padding: 20px;
+    margin-top: 75px;
+}
+
+
+.property-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.image-container {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.image-slider {
+    display: flex;
+    transition: transform 0.3s ease;
+    height: 100%;
+}
+
+.image-slider img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+/* Styles for the slider dots */
+.slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.slider-dots .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.7); /* light color for visibility */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.slider-dots .dot.active {
+    background-color: rgb(67, 36, 36); /* active dot has solid color */
+}
+
+
+.price-tag {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: #ffffffe8;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    z-index: 2;
+}
+
+.action-buttons {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+}
+
+.action-button {
+    z-index: 1;
+    border-radius: 50%;
+    background-color: rgba(57, 59, 68, .4);
+    border: 1px solid rgba(222, 222, 222, .4);
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    right: 45px;
+    position: unset;
+    margin: 0 3px;
+    cursor: pointer;
+}
+.action-button i{
+    color: #fff;
+    width: 18px;
+    height: 18px;
+}
+
+.action-button:hover {
+    transform: scale(1.1);
+}
+
+.content {
+    padding: 16px;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.rating-badge {
+    background: #003580;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.reviews {
+    color: #666;
+    font-size: 14px;
+}
+
+.property-type {
+    margin-left: auto;
+    color: #666;
+    font-size: 14px;
+}
+
+.property-name {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #002251;
+}
+.property-name a{
+    text-decoration: none;
+    color: #022e6d;
+}
+.features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    color: #666;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.location-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    bottom: 0;
+}
+
+.location-breadcrumb {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    font-size: 13px;
+}
+
+.location-breadcrumb a {
+    color: #0071c2;
+    text-decoration: none;
+}
+
+.location-breadcrumb span {
+    color: #0071c2;
+}
+
+.location-breadcrumb .separator {
+    color: #0071c2;
+    font-size: 12px;
+}
+
+.booking-logo {
+    color: #003580;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.view-btn {
+    background: #00a862;
+    color: white;
+    border: none;
+    padding: 10px 5px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.view-btn:hover {
+    background: #008f53;
+}
+.view-more-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.view-more-btn:hover {
+    background-color: #0056b3;
+}
+
+.property-card.hidden {
+    display: none;
+}
+
+/* Add responsive breakpoints */
+@media (max-width: 768px) {
+    .properties-container {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .properties-container {
+        grid-template-columns: 1fr;
+    }
+}
+

@@ -1,0 +1,146 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+.breadcrumb {
+    display: flex;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.breadcrumb-item {
+    text-decoration: none;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb-item:hover {
+    color: #0056b3; /* Darker link color on hover */
+}
+
+.breadcrumb-item::after {
+    content: ">";
+    margin-left: 8px;
+    color: #6c757d; /* Gray color for the separator */
+}
+
+.breadcrumb-item:last-child::after {
+    content: ""; /* No arrow for the last item */
+}
+.container {
+    max-width: 1200px;
+    margin: 75px auto;
+    padding: 0 1rem;
+}
+
+.property-header {
+    margin-bottom: 1.5rem;
+}
+
+.property-title {
+    font-size: 1.5rem;
+    color: #1a365d;
+    margin-bottom: 1rem;
+}
+
+.property-meta {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 1rem;
+    
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.rating-score {
+    background: #003580;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.amenity-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 200px);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.gallery img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.gallery .main-image {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    height: 410px;
+    width: 450px;
+}
+.description {
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+    position: relative;
+}
+
+#description-text {
+    line-height: 1.6;
+    max-height: 80px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+#description-text.expanded {
+    max-height: 1000px;
+}
+.show-more {
+    color: #0066cc;
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 10px;
+    font-weight: 500;
+}
+.show-more:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .gallery {
+        grid-template-columns: 1fr;
+        grid-template-rows: 300px;
+        
+    }
+    .gallery .main-image {
+        grid-column: 1;
+        grid-row: 1;
+        height: 300px;
+    }
+
+    .gallery img:not(.main-image) {
+        display: none;
+    }
+ 
+}
