@@ -14,7 +14,8 @@
     <div class="container">
         <nav class="navbar">
             <div class="navbar-brand">
-                <img src="https://static.rentbyowner.com/release/28.0.6/static/images/sites/rentbyowner.com/header_logo.svg" alt="rentbyowner logo">
+                <img src="https://static.rentbyowner.com/release/28.0.6/static/images/sites/rentbyowner.com/header_logo.svg"
+                    alt="rentbyowner logo">
             </div>
             <button id="searchToggle" class="navbar-toggle"><i class="fa fa-search" aria-hidden="true"></i></button>
             <div id="searchForm" class="search-form hidden">
@@ -28,6 +29,7 @@
         <div id="properties" class="properties-container">
             <!-- Cards will be dynamically rendered here -->
             {{range .properties}}
+            {{range .details}}
             <div class="property-card">
                 <div class="image-container">
                     <div id="slider-{{.HotelID}}" class="image-slider">
@@ -52,30 +54,35 @@
                     <div class="property-name">
                         <a href="/property/details/{{.IDHotel}}" target="_blank">{{.HotelName}}</a>
                     </div>
-                    
+
                     <div class="features">
                         {{range .Amenities}}
                         <span>•</span>
                         <span>{{.}}</span>
-                        
                         {{end}}
                     </div>
-                    
-                    <div class="location-wrapper">
-                        <div class="left-section">
-                            <div class="location-breadcrumb">
-                                <a href="#">{{.City}}</a>
-                                <span class="separator">></span>
-                                <a href="#">{{.Area}}</a>
-                            </div>
-                            <div class="booking-logo">Booking.com</div>
+                    <div class="info">
+                        <div class="location-breadcrumb">
+                            <a href="#">{{$.City}}</a>
+                            <span class="separator">></span>
+                            <a href="#">{{$.Area}}</a>
                         </div>
-                        <button class="view-btn" onclick="window.location.href='/property/{{.HotelID}}'">View
-                            Availability</button>
+                    </div>
+                    <div class="tiles-btn">
+                        <div class="website-btn col-xs-5 col-sm-5 col-md-6">
+                            <a href="#">
+                                <img src="https://static.rentbyowner.com/release/28.0.6/static/images/booking.svg" alt="Booking.com">
+                            </a>
+                        </div>
+                        <div class="availability-btn col-sm-7 col-md-6">
+                            <div class="view">
+                                <a href="#">View Availability</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
+            {{end}}
             {{else}}
             <p>No properties available.</p>
             {{end}}

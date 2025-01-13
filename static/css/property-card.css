@@ -51,6 +51,7 @@ body {
     height: 100%;
     object-fit: cover;
     flex-shrink: 0;
+    
 }
 
 /* Styles for the slider dots */
@@ -120,7 +121,7 @@ body {
 }
 
 .content {
-    padding: 16px;
+    padding: 10px;
 }
 
 .rating {
@@ -198,40 +199,32 @@ body {
     font-size: 12px;
 }
 
-.booking-logo {
-    color: #003580;
-    font-weight: bold;
-    font-size: 12px;
-}
 
-.view-btn {
-    background: #00a862;
-    color: white;
-    border: none;
-    padding: 10px 5px;
-    border-radius: 4px;
-    font-weight: 500;
+.tiles-btn{
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: -.5rem;
     cursor: pointer;
-    font-size: 12px;
 }
 
-.view-btn:hover {
-    background: #008f53;
-}
-.view-more-btn {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
+.tiles-btn .view{
+    background-color: #00cd92;
     border-radius: 5px;
-    cursor: pointer;
-}
+    padding: 0 5px;
+    height: 36px;
+    line-height: 34px;
+    text-align: center;
 
-.view-more-btn:hover {
-    background-color: #0056b3;
+    a{
+        text-decoration: none;
+        font-size: .75rem;
+        color: #fff;
+        font-weight: 700;
+        padding: 0 2px;
+        
+    }
 }
 
 .property-card.hidden {

@@ -15,122 +15,133 @@ document.addEventListener("DOMContentLoaded", () => {
         searchForm.classList.add("hidden");
     });
 });
-let currentLimit = 15; // Initial limit for properties to show
-const propertiesContainer = document.querySelector('.properties-container');
 
-async function loadProperties() {
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.location-breadcrumb a').forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            const query = event.target.textContent.trim();
+            loadProperties(query);
+        });
+    });
+});
+
+async function loadProperties(query = '') {
     try {
+        let apiURL = '/v1/property/list';
+        if (query) {
+            apiURL += `?location=${encodeURIComponent(query)}`;
+        }
         const response = await fetch(apiURL);
         const data = await response.json();
 
+        const propertiesContainer = document.querySelector('.properties-container');
+        propertiesContainer.innerHTML = ''; // Clear existing content
+
         if (data.properties && Array.isArray(data.properties) && data.properties.length > 0) {
-            const propertiesContainer = document.querySelector('.properties-container');
-            propertiesContainer.innerHTML = ''; // Clear existing content
             data.properties.forEach(property => {
-                // Create a new property card
-                const propertyCard = document.createElement("div");
-                propertyCard.classList.add("property-card");
+                property.details.forEach(detail => {
+                    const propertyCard = document.createElement("div");
+                    propertyCard.classList.add("property-card");
 
-                // Create image container for sliding images
-                const imageContainer = document.createElement("div");
-                imageContainer.classList.add("image-container");
-                
-                const imageSlider = document.createElement("div");
-                imageSlider.classList.add("image-slider");
+                    // Create image container and slider
+                    const imageContainer = document.createElement("div");
+                    imageContainer.classList.add("image-container");
+                    
+                    const imageSlider = document.createElement("div");
+                    imageSlider.classList.add("image-slider");
+                    
+                    const sliderDots = document.createElement("div");
+                    sliderDots.classList.add("slider-dots");
 
-                // Create slider dots container
-                const sliderDots = document.createElement("div");
-                sliderDots.classList.add("slider-dots");
+                    detail.Gallery.forEach((image, index) => {
+                        const imgElement = document.createElement("img");
+                        imgElement.src = image;
+                        imgElement.alt = `Property Image ${index + 1}`;
+                        imageSlider.appendChild(imgElement);
 
-                // Loop through the Gallery to add images dynamically
-                property.Gallery.forEach((image, index) => {
-                    const imgElement = document.createElement("img");
-                    imgElement.src = image;
-                    imgElement.alt = `Property Image ${index + 1}`;
-                    imageSlider.appendChild(imgElement);
+                        const dot = document.createElement("div");
+                        dot.classList.add("dot");
+                        if (index === 0) dot.classList.add("active");
+                        dot.addEventListener("click", () => goToSlide(index));
+                        sliderDots.appendChild(dot);
+                    });
 
-                    // Create dot for each image
-                    const dot = document.createElement("div");
-                    dot.classList.add("dot");
-                    if (index === 0) dot.classList.add("active"); // Set the first dot as active
-                    dot.addEventListener("click", () => goToSlide(index));
-                    sliderDots.appendChild(dot);
+                    const priceTag = document.createElement("div");
+                    priceTag.classList.add("price-tag");
+                    priceTag.textContent = `From ${detail.Price}`;
+
+                    const actionButtons = document.createElement("div");
+                    actionButtons.classList.add("action-buttons");
+                    actionButtons.innerHTML = `
+                        <div class="action-button" title="View"><i class="fa fa-eye"></i></div>
+                        <div class="action-button" title="Location"><i class="fa fa-map-marker"></i></div>
+                        <div class="action-button" title="Save"><i class="fa fa-heart-o"></i></div>
+                    `;
+
+                    imageContainer.appendChild(imageSlider);
+                    imageContainer.appendChild(sliderDots);
+                    imageContainer.appendChild(priceTag);
+                    imageContainer.appendChild(actionButtons);
+
+                    const content = document.createElement("div");
+                    content.classList.add("content");
+
+                    const ratingContainer = document.createElement("div");
+                    ratingContainer.classList.add("rating");
+                    ratingContainer.innerHTML = `
+                        <div class="rating-badge">${detail.Rating}</div>
+                        <div class="reviews">(${detail.ReviewCount} Reviews)</div>
+                        <div class="property-type">${detail.PropertyType}</div>
+                    `;
+
+                    const propertyName = document.createElement("div");
+                    propertyName.classList.add("property-name");
+                    propertyName.innerHTML = `<a href="/property/details/${detail.IDHotel}" target="_blank">${detail.HotelName}</a>`;
+
+                    const features = document.createElement("div");
+                    features.classList.add("features");
+                    features.innerHTML = detail.Amenities.map(amenity => `<span>•</span><span>${amenity}</span>`).join('');
+
+                    // Split location into City and Area
+                    const parts = detail.Location.split(", ");
+                    let city = "", area = "";
+                    if (parts.length === 2) {
+                        city = parts[1].trim();
+                        area = parts[0].trim();
+                    }
+
+                    const locationWrapper = document.createElement("div");
+                    locationWrapper.classList.add("location-wrapper");
+                    locationWrapper.innerHTML = `
+                        <div class="location-breadcrumb">
+                            <a href="#">${city}</a>
+                            <span class="separator">></span>
+                            <a href="#">${area}</a>
+                        </div>
+                        <button class="view-btn" onclick="window.location.href='/property/${detail.HotelID}'">View Availability</button>
+                    `;
+
+                    content.appendChild(ratingContainer);
+                    content.appendChild(propertyName);
+                    content.appendChild(features);
+                    content.appendChild(locationWrapper);
+
+                    propertyCard.appendChild(imageContainer);
+                    propertyCard.appendChild(content);
+
+                    propertiesContainer.appendChild(propertyCard);
                 });
-
-                // Add price tag and action buttons (if applicable)
-                const priceTag = document.createElement("div");
-                priceTag.classList.add("price-tag");
-                priceTag.textContent = `From ₹${property.Price}`;
-
-                const actionButtons = document.createElement("div");
-                actionButtons.classList.add("action-buttons");
-                actionButtons.innerHTML = `
-                    <div class="action-button" title="View">👁️</div>
-                    <div class="action-button" title="Location">📍</div>
-                    <div class="action-button" title="Save">❤️</div>
-                `;
-
-                // Append elements to the image container
-                imageContainer.appendChild(imageSlider);
-                imageContainer.appendChild(sliderDots);
-                imageContainer.appendChild(priceTag);
-                imageContainer.appendChild(actionButtons);
-
-                // Property name, rating, location, etc.
-                const content = document.createElement("div");
-                content.classList.add("content");
-
-                const ratingContainer = document.createElement("div");
-                ratingContainer.classList.add("rating");
-                ratingContainer.innerHTML = `
-                    <div class="rating-badge">${property.Rating}</div>
-                    <div class="reviews">(${property.ReviewCount} Reviews)</div>
-                    <div class="property-type">${property.PropertyType}</div>
-                `;
-                
-                const propertyName = document.createElement("div");
-                propertyName.classList.add("property-name");
-                propertyName.textContent = property.HotelName;
-
-                const features = document.createElement("div");
-                features.classList.add("features");
-                features.innerHTML = `
-                    <span>${property.Feature1}</span>
-                    <span>•</span>
-                    <span>${property.Feature2}</span>
-                `;
-
-                const locationWrapper = document.createElement("div");
-                locationWrapper.classList.add("location-wrapper");
-                locationWrapper.innerHTML = `
-                    <div class="location-breadcrumb">
-                        <a href="#">${property.City}</a>
-                        <span class="separator">></span>
-                        <a href="#">${property.Location}</a>
-                    </div>
-                    <button class="view-btn" onclick="window.location.href='/property/${property.HotelID}'">View Availability</button>
-                `;
-
-                content.appendChild(ratingContainer);
-                content.appendChild(propertyName);
-                content.appendChild(features);
-                content.appendChild(locationWrapper);
-
-                // Append image container and content to the property card
-                propertyCard.appendChild(imageContainer);
-                propertyCard.appendChild(content);
-
-                // Append property card to properties container
-                propertiesContainer.appendChild(propertyCard);
             });
         } else {
             propertiesContainer.innerHTML = "<p>No properties available.</p>";
         }
     } catch (error) {
         console.error("Error loading properties:", error);
-        propertiesContainer.innerHTML = "<p>Error loading properties. Please try again later.</p>";
+        document.querySelector('.properties-container').innerHTML = "<p>Error loading properties. Please try again later.</p>";
     }
 }
+
 
 // Slider functionality (for dots, swipe, etc.)
 let currentSlide = 0;

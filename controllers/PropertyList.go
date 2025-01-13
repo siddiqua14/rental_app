@@ -7,6 +7,7 @@ import (
     "log"
     "net/http"
     "strings"
+    "net/url"
 )
 
 type PropertyListController struct {
@@ -21,8 +22,15 @@ func toSingular(input string) string {
     return input
 }
 
+
 func (c *PropertyListController) Get() {
-    resp, err := http.Get("http://localhost:8080/v1/property/list")
+    location := c.GetString("location")
+    apiURL := "http://localhost:8080/v1/property/list"
+    if location != "" {
+        apiURL += "?location=" + url.QueryEscape(location)
+    }
+
+    resp, err := http.Get(apiURL)
     if err != nil {
         log.Fatal(err)
         c.Data["json"] = map[string]string{"error": "Unable to fetch data from API"}
@@ -49,28 +57,40 @@ func (c *PropertyListController) Get() {
     }
 
     // Process the properties to handle plural types
+    // Process the properties to handle plural types
     if properties, ok := responseData["properties"].([]interface{}); ok {
         for _, property := range properties {
             if propMap, ok := property.(map[string]interface{}); ok {
-                // Convert PropertyType to singular
-                if propertyType, ok := propMap["PropertyType"].(string); ok {
-                    propMap["PropertyType"] = toSingular(propertyType)
-                }
-                // Split location into city and area
+                // Process the location and locationId
                 if location, ok := propMap["Location"].(string); ok {
                     parts := strings.Split(location, ", ")
                     if len(parts) == 2 {
                         propMap["City"] = strings.TrimSpace(parts[1]) // New York
-                        propMap["Area"] = strings.TrimSpace(parts[0]) // Manhattan
+                        propMap["Area"] = strings.TrimSpace(parts[0]) // Upper West Side
                     }
                 }
-                // Pass amenities to the template
-                if amenities, ok := propMap["Amenities"].([]interface{}); ok {
-                    propMap["Amenities"] = amenities // Ensure Amenities are passed to the template
-                }
-                // Map HotelID if not already included
-                if hotelID, ok := propMap["HotelID"].(string); ok {
-                    propMap["PropertyID"] = hotelID // This will map HotelID to PropertyID if needed
+
+                // Process the details
+                if details, ok := propMap["details"].([]interface{}); ok {
+                    for _, detail := range details {
+                        if detailMap, ok := detail.(map[string]interface{}); ok {
+                            // Singularize PropertyType
+                            if propertyType, ok := detailMap["PropertyType"].(string); ok {
+                                detailMap["PropertyType"] = toSingular(propertyType)
+                            }
+
+                            // Handle Amenities
+                            if amenities, ok := detailMap["Amenities"].([]interface{}); ok {
+                                detailMap["Amenities"] = amenities
+                            }
+
+                            // Rename HotelID to PropertyID
+                            if hotelID, ok := detailMap["HotelID"].(string); ok {
+                                detailMap["PropertyID"] = hotelID
+                            }
+                        }
+                    }
+                    propMap["details"] = details
                 }
             }
         }
@@ -81,4 +101,5 @@ func (c *PropertyListController) Get() {
 
     c.Data["message"] = responseData["message"]
     c.TplName = "rental.tpl"
+    c.Render()
 }
