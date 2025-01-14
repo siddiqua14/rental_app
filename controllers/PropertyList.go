@@ -57,9 +57,19 @@ func (c *PropertyListController) Get() {
     }
 
     // Process the properties to handle plural types
+    var locations []string
+    locationSet := make(map[string]struct{})
+
     if properties, ok := responseData["properties"].([]interface{}); ok {
         for _, property := range properties {
             if propMap, ok := property.(map[string]interface{}); ok {
+                if loc, ok := propMap["Location"].(string); ok {
+                    if _, exists := locationSet[loc]; !exists {
+                        locations = append(locations, loc)
+                        locationSet[loc] = struct{}{}
+                    }
+                }
+
                 // Process the details
                 if details, ok := propMap["details"].([]interface{}); ok {
                     for _, detail := range details {
@@ -97,11 +107,18 @@ func (c *PropertyListController) Get() {
             }
         }
         c.Data["properties"] = properties
+
+        // Marshal locations to JSON and pass to template
+        locationsJSON, err := json.Marshal(locations)
+        if err != nil {
+            log.Fatal(err)
+        }
+        c.Data["locationsJSON"] = string(locationsJSON)
     } else {
         c.Data["properties"] = nil
+        c.Data["locationsJSON"] = "[]"
     }
 
-    c.Data["message"] = responseData["message"]
     c.TplName = "rental.tpl"
     c.Render()
 }

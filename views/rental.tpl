@@ -17,12 +17,17 @@
                 alt="rentbyowner logo">
         </div>
         <button id="searchToggle" class="navbar-toggle"><i class="fa fa-search" aria-hidden="true"></i></button>
-        <div id="searchForm" class="search-form hidden">
-            <input id="searchInput" type="text" placeholder="Search locations..." autocomplete="off"/>
-            <div id="autocompleteSuggestions" class="autocomplete-suggestions hidden"></div>
-            <button class="search-button">Search</button>
-            <a id="closeSearch" class="close-button">Close</a>
+        <div id="searchForm" class="search-form relative">
+            <input type="text" id="searchInput" placeholder="Search..." class="p-2 border rounded w-full" />
+            <button class="search-button bg-blue-500 text-white p-2 rounded" onclick="searchLocations()">Search</button>
+            <a id="closeSearch" class="close-button text-red-500 ml-2 cursor-pointer" onclick="closeSearch()">Close</a>
         </div>
+        <div id="locationDropdown" class="hidden"></div>
+        
+        
+        
+        
+        
     </nav>
     <div class="container">
         <div id="properties" class="properties-container">

@@ -2,16 +2,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchToggle = document.getElementById("searchToggle");
     const searchForm = document.getElementById("searchForm");
     const closeSearch = document.getElementById("closeSearch");
-    const searchInput = document.getElementById("searchInput");
-    const autocompleteSuggestions = document.getElementById("autocompleteSuggestions");
-
-    let locationData = [];
-
     // Show search form with animation
     searchToggle?.addEventListener("click", () => {
         searchForm.classList.remove("hidden");
         searchForm.classList.add("visible");
-        fetchLocations(); // Fetch locations when opening the search
     });
 
     // Hide search form with animation
@@ -20,78 +14,158 @@ document.addEventListener("DOMContentLoaded", () => {
         searchForm.classList.add("hidden");
     });
 
-    // Fetch locations from API
-    async function fetchLocations() {
-        try {
-            const response = await fetch('http://localhost:8080/v1/property/location');
-            const data = await response.json();
-            locationData = Array.isArray(data) ? data : Object.entries(data).map(([key, value]) => ({
-                LocationId: value.LocationId,
-                Value: value.Value
-            }));
-        } catch (error) {
-            console.error("Error fetching locations:", error);
-        }
-    }
-
-    // Filter locations based on input
-    function filterLocations(searchText) {
-        return locationData.filter(location =>
-            location.Value.toLowerCase().includes(searchText.toLowerCase())
-        );
-    }
-
-    // Display suggestions
-    function displaySuggestions(suggestions) {
-        autocompleteSuggestions.innerHTML = '';
-
-        if (suggestions.length === 0) {
-            autocompleteSuggestions.classList.add("hidden");
-            return;
-        }
-
-        suggestions.forEach(location => {
-            const suggestionDiv = document.createElement('div');
-            suggestionDiv.className = 'suggestion-item';
-            suggestionDiv.textContent = location.Value;
-            suggestionDiv.addEventListener('click', () => {
-                searchInput.value = location.Value;
-                autocompleteSuggestions.classList.add("hidden");
-            });
-            autocompleteSuggestions.appendChild(suggestionDiv);
-        });
-
-        autocompleteSuggestions.classList.remove("hidden");
-    }
-
-    // Handle input changes with debounce
-    let debounceTimeout;
-    searchInput.addEventListener("input", (e) => {
-        clearTimeout(debounceTimeout);
-
-        const searchText = e.target.value;
-
-        if (searchText === '') {
-            autocompleteSuggestions.classList.add("hidden");
-            return;
-        }
-
-        debounceTimeout = setTimeout(() => {
-            const filteredLocations = filterLocations(searchText);
-            displaySuggestions(filteredLocations);
-        }, 300); // Debounce delay of 300ms
-    });
-
-    // Close suggestions when clicking outside
-    document.addEventListener("click", (event) => {
-        if (!searchForm.contains(event.target)) {
-            autocompleteSuggestions.classList.add("hidden");
-        }
-    });
-
-    // Initial fetch of locations
-    fetchLocations();
 });
+
+// Fetch locations from the backend and show the dropdown
+function searchLocations() {
+    const query = document.getElementById('searchInput').value.trim(); // Get user input
+    if (!query) {
+        hideLocationDropdown(); // Hide dropdown if query is empty
+        return;
+    }
+
+    // Fetch locations from the backend
+    fetch('/property/location', {
+        method: 'GET',
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && Array.isArray(data)) {
+            // Filter locations based on the query
+            const matchedLocations = data.filter(location => 
+                location.Value.toLowerCase().includes(query.toLowerCase())
+            );
+            showLocationDropdown(matchedLocations); // Show matched locations in dropdown
+        } else {
+            console.error('Invalid data format received:', data);
+            hideLocationDropdown(); // Hide dropdown on error
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching locations:', error);
+        hideLocationDropdown(); // Hide dropdown on error
+    });
+}
+
+// Show the dropdown with matched locations
+function showLocationDropdown(locations) {
+    let dropdown = document.getElementById('locationDropdown');
+
+    // Create dropdown if it doesn't exist
+    if (!dropdown) {
+        dropdown = document.createElement('div');
+        dropdown.id = 'locationDropdown';
+        dropdown.className = 'absolute z-50 w-64 bg-white shadow-lg rounded-lg mt-1';
+        document.getElementById('searchForm').appendChild(dropdown);
+    }
+
+    // Clear previous content
+    dropdown.innerHTML = '';
+
+    // Populate dropdown with matched locations
+    if (locations.length === 0) {
+        const noResults = document.createElement('div');
+        noResults.className = 'p-2 text-gray-500';
+        noResults.textContent = 'No locations found';
+        dropdown.appendChild(noResults);
+        return;
+    }
+
+    locations.forEach(location => {
+        const item = document.createElement('div');
+        item.className = 'p-2 hover:bg-gray-100 cursor-pointer';
+        item.textContent = location.Value; // Display location value
+        item.onclick = () => {
+            document.getElementById('searchInput').value = location.Value; // Set selected location
+            updateURLAndDisplayData(location.Value); // Update URL and show data
+            hideLocationDropdown(); // Hide dropdown after selection
+        };
+        dropdown.appendChild(item);
+    });
+}
+
+// Hide the dropdown
+function hideLocationDropdown() {
+    const dropdown = document.getElementById('locationDropdown');
+    if (dropdown) {
+        dropdown.remove();
+    }
+}
+
+// Event listener for input changes in the search field
+document.getElementById('searchInput').addEventListener('input', searchLocations);
+
+// Event listener to close the search form
+function closeSearch() {
+    document.getElementById('searchForm').classList.add('hidden');
+    hideLocationDropdown(); // Hide the dropdown when closing the form
+}
+
+// Update URL and fetch data based on selected location
+function updateURLAndDisplayData(locationValue) {
+    // Encode location for URL
+    const encodedLocation = encodeURIComponent(locationValue);
+
+    // Update the browser URL without reloading the page
+    window.history.pushState({}, "", `/property/${encodedLocation}`);
+
+    // Fetch data for the selected location
+    fetch(`/property/${encodedLocation}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data) {
+                displayLocationData(data); // Display data dynamically
+            } else {
+                console.error('Error fetching data for location:', data);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching location data:', error);
+        });
+}
+
+// Display location data dynamically (you can customize this function)
+function displayLocationData(data) {
+    // Display the data in a section or elsewhere on the page
+    const dataContainer = document.getElementById('dataContainer');
+    dataContainer.innerHTML = ''; // Clear previous data
+
+    if (Array.isArray(data) && data.length > 0) {
+        data.forEach(location => {
+            const locationElement = document.createElement('div');
+            locationElement.className = 'location-item';
+            locationElement.innerHTML = `
+                <h3>${location.Value}</h3>
+                <p><strong>Location ID:</strong> ${location.LocationId}</p>
+                <p><strong>Price:</strong> ${location.Price}</p>
+                <!-- Add other data fields as necessary -->
+            `;
+            dataContainer.appendChild(locationElement);
+        });
+    } else {
+        dataContainer.innerHTML = '<p>No data available for this location.</p>';
+    }
+}
+
+// Handle popstate event to manage back and forward buttons without reload
+window.addEventListener('popstate', function(event) {
+    const location = window.location.pathname.split('/')[2];
+    if (location) {
+        fetch(`/property/${location}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    displayLocationData(data); // Display data dynamically when navigating via history
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching location data on back/forward:', error);
+            });
+    }
+});
+
+
+
 
 
 
