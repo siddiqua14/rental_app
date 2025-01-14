@@ -74,15 +74,13 @@ func (c *PropertyListController) Get() {
                 if details, ok := propMap["details"].([]interface{}); ok {
                     for _, detail := range details {
                         if detailMap, ok := detail.(map[string]interface{}); ok {
-                            // Process the Location in each detail
+                          
+                            // Split location into city and area
                             if location, ok := detailMap["Location"].(string); ok {
                                 parts := strings.Split(location, ", ")
                                 if len(parts) == 2 {
                                     detailMap["City"] = strings.TrimSpace(parts[1]) // New York
-                                    detailMap["Area"] = strings.TrimSpace(parts[0]) // Upper West Side
-                                } else {
-                                    detailMap["City"] = location // Fallback for invalid format
-                                    detailMap["Area"] = ""       // Empty Area
+                                    detailMap["Area"] = strings.TrimSpace(parts[0]) // Manhattan
                                 }
                             }
 

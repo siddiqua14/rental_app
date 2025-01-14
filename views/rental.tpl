@@ -19,17 +19,17 @@
         <button id="searchToggle" class="navbar-toggle"><i class="fa fa-search" aria-hidden="true"></i></button>
         <div id="searchForm" class="search-form relative">
             <input type="text" id="searchInput" placeholder="Search..." class="p-2 border rounded w-full" />
-            <button class="search-button bg-blue-500 text-white p-2 rounded" onclick="searchLocations()">Search</button>
+            <button class="search-button bg-blue-500 text-white p-2 rounded">Search</button>
             <a id="closeSearch" class="close-button text-red-500 ml-2 cursor-pointer" onclick="closeSearch()">Close</a>
         </div>
         <div id="locationDropdown" class="hidden"></div>
-        
-        
-        
-        
+
         
     </nav>
     <div class="container">
+        <div id="dataContainer" class="properties-container">
+            <!-- Property cards will be dynamically rendered here -->
+        </div>
         <div id="properties" class="properties-container">
             <!-- Cards will be dynamically rendered here -->
             {{range .properties}}
@@ -66,7 +66,7 @@
                         {{end}}
                     </div>
                     {{range .properties}}
-                    <div class="info">
+                    <div class="location-wrapper">
                         {{range .details}}
                         <div class="detail-info">
                             <div class="location-breadcrumb">

@@ -100,6 +100,7 @@
     background: #36525e;
 }
 #locationDropdown {
+    left: 0;
     top: 133px;
     position: absolute;
     z-index: 9999;

@@ -18,8 +18,7 @@ type GetLocationController struct {
 func (c *GetLocationController) Get() {
     location := c.Ctx.Input.Param(":location")
     location = strings.ReplaceAll(location, "-", " ") // Convert dashes to spaces
-    
-    // Handle the two return values of url.QueryUnescape
+
     unescapedLocation, err := url.QueryUnescape(location)
     if err != nil {
         log.Println("Error decoding location:", err)
@@ -54,11 +53,16 @@ func (c *GetLocationController) Get() {
         }
     }
 
+    // Set the filtered locations to the template
     if len(filteredLocations) == 0 {
-        c.Data["json"] = map[string]string{"message": "No matching locations found"}
+        c.Data["Locations"] = []map[string]interface{}{}
+        c.Data["Message"] = "No matching locations found"
     } else {
-        c.Data["json"] = filteredLocations
+        c.Data["Locations"] = filteredLocations
     }
-    c.ServeJSON()
+
+    c.TplName = "locations.tpl" // Specify the template file
+    c.Render()
 }
+
 

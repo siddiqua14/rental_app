@@ -50,3 +50,40 @@ document.querySelector('.view-more-overlay').addEventListener('click', () => {
     // Handle view more photos click
     console.log('View more photos clicked');
 });
+
+// Function to handle the search when clicking a breadcrumb item
+function searchByValue(value) {
+    // Update the URL based on the clicked breadcrumb item (reload the page with matching data)
+    const encodedValue = encodeURIComponent(value);
+    window.history.pushState({}, "", `/property/${encodedValue}`); // Update the URL
+
+}
+
+// Function to display the property cards (modify this as per your project structure)
+function displayPropertyCards(data) {
+    const propertyContainer = document.getElementById('property-list'); // Assuming you have a container with this ID
+    propertyContainer.innerHTML = ''; // Clear previous content
+
+    // Display each property item in the data array
+    data.forEach(property => {
+        const propertyCard = document.createElement('div');
+        propertyCard.classList.add('property-card');
+        propertyCard.innerHTML = `
+            <h3>${property.title}</h3>
+            <p>${property.description}</p>
+            <!-- Add other property details as needed -->
+        `;
+        propertyContainer.appendChild(propertyCard);
+    });
+}
+
+// Optional: Add event listener for back/forward navigation if needed
+window.addEventListener('popstate', () => {
+    const location = decodeURIComponent(window.location.pathname.split('/')[2]);
+    if (location) {
+        searchByValue(location);
+    }
+});
+function navigateToLocation(locationValue) {
+    window.location.href = `/property/${encodeURIComponent(locationValue)}`;
+}

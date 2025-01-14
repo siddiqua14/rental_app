@@ -34,19 +34,15 @@
 
     <div class="container">
         <div class="breadcrumb">
-            <a href="http://localhost:3000/property/list" target="_blank" class="breadcrumb-item">
-                {{.breadcrumb.LocationRentals}}
-            </a>
-            <a href="http://localhost:3000/property/list" target="_blank" class="breadcrumb-item">
-                {{.breadcrumb.Country}}
-            </a>
-            <a href="http://localhost:3000/property/list" target="_blank" class="breadcrumb-item">
-                {{.breadcrumb.State}}
-            </a>
-            <a href="http://localhost:3000/property/list" target="_blank" class="breadcrumb-item">
-                {{.breadcrumb.City}}
-            </a>
+            <!-- Fixed and non-clickable breadcrumb item -->
+            <span class="breadcrumb-item">{{.breadcrumb.LocationRentals}}</span>
+        
+            <!-- Clickable breadcrumb items -->
+            <span class="breadcrumb-item" onclick="navigateToLocation('{{.breadcrumb.Country}}')">{{.breadcrumb.Country}}</span>
+            <span class="breadcrumb-item" onclick="navigateToLocation('{{.breadcrumb.State}}')">{{.breadcrumb.State}}</span>
+            <span class="breadcrumb-item" onclick="navigateToLocation('{{.breadcrumb.City}}')">{{.breadcrumb.City}}</span>
         </div>
+        
 
         <div class="property-header">
             <h1 class="property-title">

@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchToggle = document.getElementById("searchToggle");
     const searchForm = document.getElementById("searchForm");
     const closeSearch = document.getElementById("closeSearch");
+
     // Show search form with animation
     searchToggle?.addEventListener("click", () => {
         searchForm.classList.remove("hidden");
@@ -14,9 +15,47 @@ document.addEventListener("DOMContentLoaded", () => {
         searchForm.classList.add("hidden");
     });
 
+    // Search button click event
+    const searchButton = document.querySelector('.search-button');
+    if (searchButton) {
+        searchButton.addEventListener('click', searchLocations);
+    }
+
+    // Enter key press event
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                searchLocations(); // Trigger search when Enter key is pressed
+            }
+        });
+    }
 });
 
-// Fetch locations from the backend and show the dropdown
+
+
+// Search location logic
+document.getElementById('searchInput').addEventListener('input', function () {
+    const query = this.value.trim();
+    if (!query) {
+        hideLocationDropdown();
+        return;
+    }
+
+    fetch('/property/location')
+        .then(response => response.json())
+        .then(data => {
+            if (data && Array.isArray(data)) {
+                const matchedLocations = data.filter(location => location.Value.toLowerCase().includes(query.toLowerCase()));
+                showLocationDropdown(matchedLocations);
+            } else {
+                hideLocationDropdown();
+            }
+        })
+        .catch(() => hideLocationDropdown());
+});
+
+// Search location logic
 function searchLocations() {
     const query = document.getElementById('searchInput').value.trim(); // Get user input
     if (!query) {
@@ -47,74 +86,51 @@ function searchLocations() {
     });
 }
 
-// Show the dropdown with matched locations
+// Show dropdown for matched locations
 function showLocationDropdown(locations) {
-    let dropdown = document.getElementById('locationDropdown');
-
-    // Create dropdown if it doesn't exist
-    if (!dropdown) {
-        dropdown = document.createElement('div');
-        dropdown.id = 'locationDropdown';
-        dropdown.className = 'absolute z-50 w-64 bg-white shadow-lg rounded-lg mt-1';
-        document.getElementById('searchForm').appendChild(dropdown);
-    }
-
-    // Clear previous content
-    dropdown.innerHTML = '';
-
-    // Populate dropdown with matched locations
-    if (locations.length === 0) {
-        const noResults = document.createElement('div');
-        noResults.className = 'p-2 text-gray-500';
-        noResults.textContent = 'No locations found';
-        dropdown.appendChild(noResults);
-        return;
-    }
-
-    locations.forEach(location => {
-        const item = document.createElement('div');
-        item.className = 'p-2 hover:bg-gray-100 cursor-pointer';
-        item.textContent = location.Value; // Display location value
-        item.onclick = () => {
-            document.getElementById('searchInput').value = location.Value; // Set selected location
-            updateURLAndDisplayData(location.Value); // Update URL and show data
-            hideLocationDropdown(); // Hide dropdown after selection
-        };
-        dropdown.appendChild(item);
-    });
+    const dropdown = document.getElementById('locationDropdown');
+    dropdown.innerHTML = locations.map(location => `
+        <div class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectLocation('${location.Value}')">
+            ${location.Value}
+        </div>
+    `).join('');
+    dropdown.classList.remove('hidden');
 }
-
-// Hide the dropdown
+// Hide location dropdown
 function hideLocationDropdown() {
     const dropdown = document.getElementById('locationDropdown');
-    if (dropdown) {
-        dropdown.remove();
-    }
+    dropdown.classList.add('hidden');
 }
 
-// Event listener for input changes in the search field
-document.getElementById('searchInput').addEventListener('input', searchLocations);
+function selectLocation(locationValue) {
+    document.getElementById('searchInput').value = locationValue;
+    updateURLAndDisplayData(locationValue);
+    hideLocationDropdown();
+}
 
 // Event listener to close the search form
 function closeSearch() {
     document.getElementById('searchForm').classList.add('hidden');
     hideLocationDropdown(); // Hide the dropdown when closing the form
 }
+// Handle back/forward navigation
+window.addEventListener('popstate', () => {
+    const location = decodeURIComponent(window.location.pathname.split('/')[2]);
+    if (location) {
+        updateURLAndDisplayData(location);
+    }
+});
 
 // Update URL and fetch data based on selected location
 function updateURLAndDisplayData(locationValue) {
-    // Encode location for URL
     const encodedLocation = encodeURIComponent(locationValue);
-
-    // Update the browser URL without reloading the page
     window.history.pushState({}, "", `/property/${encodedLocation}`);
 
-    // Fetch data for the selected location
     fetch(`/property/${encodedLocation}`)
         .then(response => response.json())
         .then(data => {
             if (data) {
-                displayLocationData(data); // Display data dynamically
+                displayPropertyCards(data);
             } else {
                 console.error('Error fetching data for location:', data);
             }
@@ -124,26 +140,51 @@ function updateURLAndDisplayData(locationValue) {
         });
 }
 
-// Display location data dynamically (you can customize this function)
-function displayLocationData(data) {
-    // Display the data in a section or elsewhere on the page
+// Render property cards dynamically
+function displayPropertyCards(data) {
     const dataContainer = document.getElementById('dataContainer');
-    dataContainer.innerHTML = ''; // Clear previous data
+    dataContainer.innerHTML = '';
 
     if (Array.isArray(data) && data.length > 0) {
-        data.forEach(location => {
-            const locationElement = document.createElement('div');
-            locationElement.className = 'location-item';
-            locationElement.innerHTML = `
-                <h3>${location.Value}</h3>
-                <p><strong>Location ID:</strong> ${location.LocationId}</p>
-                <p><strong>Price:</strong> ${location.Price}</p>
-                <!-- Add other data fields as necessary -->
-            `;
-            dataContainer.appendChild(locationElement);
+        data.forEach(property => {
+            Object.keys(property).forEach(key => {
+                const details = property[key];
+                const card = document.createElement('div');
+                card.className = 'property-card shadow-lg rounded-md p-4 bg-white';
+
+                card.innerHTML = `
+                    <div class="image-container relative">
+                        <div id="slider-${details.HotelID}" class="image-slider">
+                            ${details.Gallery.map(img => `
+                                <img src="${img}" alt="Property Image" class="w-full h-48 object-cover rounded-md">
+                            `).join('')}
+                        </div>
+                        <div class="price-tag absolute top-2 left-2 bg-gray-900 text-white text-sm px-2 py-1 rounded-md">
+                            From ${details.Price}
+                        </div>
+                    </div>
+                    <div class="content mt-4">
+                        <div class="flex justify-between items-center">
+                            <div class="rating flex items-center">
+                                <div class="rating-badge bg-green-500 text-white text-xs px-2 py-1 rounded-md">${details.Rating}</div>
+                                <div class="reviews text-gray-500 text-sm ml-2">(${details.ReviewCount} Reviews)</div>
+                            </div>
+                            <div class="property-type text-gray-500 text-sm">${details.PropertyType}</div>
+                        </div>
+                        <div class="property-name mt-2 font-semibold text-lg text-blue-600">
+                            <a href="/property/details/${details.IDHotel}" target="_blank">${details.HotelName}</a>
+                        </div>
+                        <div class="location text-gray-500 text-sm mt-1">${details.Location}</div>
+                        <div class="features mt-2 text-gray-600 text-sm">
+                            ${details.Amenities.map(amenity => `<span>• ${amenity}</span>`).join(' ')}
+                        </div>
+                    </div>
+                `;
+                dataContainer.appendChild(card);
+            });
         });
     } else {
-        dataContainer.innerHTML = '<p>No data available for this location.</p>';
+        dataContainer.innerHTML = '<p class="text-gray-500">No properties available for this location.</p>';
     }
 }
 
@@ -250,11 +291,10 @@ async function loadProperties(query = '') {
                     locationWrapper.classList.add("location-wrapper");
                     locationWrapper.innerHTML = `
                         <div class="location-breadcrumb">
-                            <a href="#">${detail.City || ''}</a>
+                            <a href="#">${detail.City}</a>
                             <span class="separator">></span>
-                            <a href="#">${detail.Area || ''}</a>
+                            <a href="#">${detail.Location}</a>
                         </div>
-                        <button class="view-btn" onclick="window.location.href='/property/${detail.HotelID}'">View Availability</button>
                     `;
 
 

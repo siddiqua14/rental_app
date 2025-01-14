@@ -7,6 +7,7 @@ import (
 	
 )
 
+
 func main() {
 	// Set static path for serving CSS, JS, and other static files
 	web.SetStaticPath("/static", "static")
