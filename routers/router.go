@@ -7,6 +7,7 @@ import (
 
 func init() {
 	web.Router("/property/list", &controllers.PropertyListController{})
+	web.Router("/property/location", &controllers.PropertyLocController{})
 	//web.Router("/property/details", &controllers.PropertyDetailsController{})
 	web.Router("/property/details/:hotelID", &controllers.PropertyDetailsController{})
 }

@@ -57,23 +57,25 @@ func (c *PropertyListController) Get() {
     }
 
     // Process the properties to handle plural types
-    // Process the properties to handle plural types
     if properties, ok := responseData["properties"].([]interface{}); ok {
         for _, property := range properties {
             if propMap, ok := property.(map[string]interface{}); ok {
-                // Process the location and locationId
-                if location, ok := propMap["Location"].(string); ok {
-                    parts := strings.Split(location, ", ")
-                    if len(parts) == 2 {
-                        propMap["City"] = strings.TrimSpace(parts[1]) // New York
-                        propMap["Area"] = strings.TrimSpace(parts[0]) // Upper West Side
-                    }
-                }
-
                 // Process the details
                 if details, ok := propMap["details"].([]interface{}); ok {
                     for _, detail := range details {
                         if detailMap, ok := detail.(map[string]interface{}); ok {
+                            // Process the Location in each detail
+                            if location, ok := detailMap["Location"].(string); ok {
+                                parts := strings.Split(location, ", ")
+                                if len(parts) == 2 {
+                                    detailMap["City"] = strings.TrimSpace(parts[1]) // New York
+                                    detailMap["Area"] = strings.TrimSpace(parts[0]) // Upper West Side
+                                } else {
+                                    detailMap["City"] = location // Fallback for invalid format
+                                    detailMap["Area"] = ""       // Empty Area
+                                }
+                            }
+
                             // Singularize PropertyType
                             if propertyType, ok := detailMap["PropertyType"].(string); ok {
                                 detailMap["PropertyType"] = toSingular(propertyType)

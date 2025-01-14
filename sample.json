@@ -1,0 +1,32 @@
+{
+    "LocationId": "1174",
+    "Value": "Times Square, New York, New York, United States",
+    "id:10027699": {
+        "Amenities": [
+            "Non-smoking rooms",
+            " Fitness center",
+            " Pet friendly"
+        ],
+        "Bedroom": 10,
+        "Gallery": [
+            "https://cf.bstatic.com/xdata/images/hotel/max200/492030917.jpg?k=c1f464007229821686ac6ca17ff2244cd4576f2b37b6345a3445ecaae823d744\u0026o=\u0026hp=1",
+            "https://cf.bstatic.com/xdata/images/hotel/max200/492030940.jpg?k=f25e85ad5a27d5a4b6b7eca1376c332090db0363d949873f9a6a9934ef2e111c\u0026o=\u0026hp=1",
+            "https://cf.bstatic.com/xdata/images/hotel/max200/464090155.jpg?k=623600df88d68d197f7af8f63d37207657c2182670b5e5493ac01344b58351cf\u0026o=\u0026hp=1",
+            "https://cf.bstatic.com/xdata/images/hotel/max200/492030932.jpg?k=df8e903e658c95db7ed835ea9933a4d0cf4dc7a8db984e3b0bd235edd77da544\u0026o=\u0026hp=1",
+            "https://cf.bstatic.com/xdata/images/hotel/max200/492030945.jpg?k=15fd41fb552ebad851102780a37c3d1dbc9cc151688b13a9ee60a5c70f548dde\u0026o=\u0026hp=1"
+        ],
+        "Guests": 1,
+        "HeroImage": "https://cf.bstatic.com/xdata/images/hotel/max200/492030917.jpg?k=c1f464007229821686ac6ca17ff2244cd4576f2b37b6345a3445ecaae823d744\u0026o=\u0026hp=1",
+        "HotelID": "us/romer-hell-39-s-kitchen",
+        "HotelName": "Romer Hell's Kitchen",
+        "ID": 38,
+        "IDHotel": 10027699,
+        "Location": "Hell's Kitchen, New York",
+        "NumBaths": 0,
+        "NumBedR": 0,
+        "NumBeds": 1,
+        "Price": "US$1,281.60",
+        "PropertyType": "Hotels",
+        "Rating": 8.6,
+        "ReviewCount": 2365
+    }

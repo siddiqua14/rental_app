@@ -2,11 +2,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchToggle = document.getElementById("searchToggle");
     const searchForm = document.getElementById("searchForm");
     const closeSearch = document.getElementById("closeSearch");
+    const searchInput = document.getElementById("searchInput");
+    const autocompleteSuggestions = document.getElementById("autocompleteSuggestions");
+
+    let locationData = [];
 
     // Show search form with animation
-    searchToggle.addEventListener("click", () => {
+    searchToggle?.addEventListener("click", () => {
         searchForm.classList.remove("hidden");
         searchForm.classList.add("visible");
+        fetchLocations(); // Fetch locations when opening the search
     });
 
     // Hide search form with animation
@@ -14,17 +19,81 @@ document.addEventListener("DOMContentLoaded", () => {
         searchForm.classList.remove("visible");
         searchForm.classList.add("hidden");
     });
+
+    // Fetch locations from API
+    async function fetchLocations() {
+        try {
+            const response = await fetch('http://localhost:8080/v1/property/location');
+            const data = await response.json();
+            locationData = Array.isArray(data) ? data : Object.entries(data).map(([key, value]) => ({
+                LocationId: value.LocationId,
+                Value: value.Value
+            }));
+        } catch (error) {
+            console.error("Error fetching locations:", error);
+        }
+    }
+
+    // Filter locations based on input
+    function filterLocations(searchText) {
+        return locationData.filter(location =>
+            location.Value.toLowerCase().includes(searchText.toLowerCase())
+        );
+    }
+
+    // Display suggestions
+    function displaySuggestions(suggestions) {
+        autocompleteSuggestions.innerHTML = '';
+
+        if (suggestions.length === 0) {
+            autocompleteSuggestions.classList.add("hidden");
+            return;
+        }
+
+        suggestions.forEach(location => {
+            const suggestionDiv = document.createElement('div');
+            suggestionDiv.className = 'suggestion-item';
+            suggestionDiv.textContent = location.Value;
+            suggestionDiv.addEventListener('click', () => {
+                searchInput.value = location.Value;
+                autocompleteSuggestions.classList.add("hidden");
+            });
+            autocompleteSuggestions.appendChild(suggestionDiv);
+        });
+
+        autocompleteSuggestions.classList.remove("hidden");
+    }
+
+    // Handle input changes with debounce
+    let debounceTimeout;
+    searchInput.addEventListener("input", (e) => {
+        clearTimeout(debounceTimeout);
+
+        const searchText = e.target.value;
+
+        if (searchText === '') {
+            autocompleteSuggestions.classList.add("hidden");
+            return;
+        }
+
+        debounceTimeout = setTimeout(() => {
+            const filteredLocations = filterLocations(searchText);
+            displaySuggestions(filteredLocations);
+        }, 300); // Debounce delay of 300ms
+    });
+
+    // Close suggestions when clicking outside
+    document.addEventListener("click", (event) => {
+        if (!searchForm.contains(event.target)) {
+            autocompleteSuggestions.classList.add("hidden");
+        }
+    });
+
+    // Initial fetch of locations
+    fetchLocations();
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.location-breadcrumb a').forEach(link => {
-        link.addEventListener('click', (event) => {
-            event.preventDefault();
-            const query = event.target.textContent.trim();
-            loadProperties(query);
-        });
-    });
-});
+
 
 async function loadProperties(query = '') {
     try {
@@ -47,10 +116,10 @@ async function loadProperties(query = '') {
                     // Create image container and slider
                     const imageContainer = document.createElement("div");
                     imageContainer.classList.add("image-container");
-                    
+
                     const imageSlider = document.createElement("div");
                     imageSlider.classList.add("image-slider");
-                    
+
                     const sliderDots = document.createElement("div");
                     sliderDots.classList.add("slider-dots");
 
@@ -103,24 +172,17 @@ async function loadProperties(query = '') {
                     features.classList.add("features");
                     features.innerHTML = detail.Amenities.map(amenity => `<span>•</span><span>${amenity}</span>`).join('');
 
-                    // Split location into City and Area
-                    const parts = detail.Location.split(", ");
-                    let city = "", area = "";
-                    if (parts.length === 2) {
-                        city = parts[1].trim();
-                        area = parts[0].trim();
-                    }
-
                     const locationWrapper = document.createElement("div");
                     locationWrapper.classList.add("location-wrapper");
                     locationWrapper.innerHTML = `
                         <div class="location-breadcrumb">
-                            <a href="#">${city}</a>
+                            <a href="#">${detail.City || ''}</a>
                             <span class="separator">></span>
-                            <a href="#">${area}</a>
+                            <a href="#">${detail.Area || ''}</a>
                         </div>
                         <button class="view-btn" onclick="window.location.href='/property/${detail.HotelID}'">View Availability</button>
                     `;
+
 
                     content.appendChild(ratingContainer);
                     content.appendChild(propertyName);

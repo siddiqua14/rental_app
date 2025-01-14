@@ -11,21 +11,20 @@
 </head>
 
 <body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <img src="https://static.rentbyowner.com/release/28.0.6/static/images/sites/rentbyowner.com/header_logo.svg"
+                alt="rentbyowner logo">
+        </div>
+        <button id="searchToggle" class="navbar-toggle"><i class="fa fa-search" aria-hidden="true"></i></button>
+        <div id="searchForm" class="search-form hidden">
+            <input id="searchInput" type="text" placeholder="Search locations..." autocomplete="off"/>
+            <div id="autocompleteSuggestions" class="autocomplete-suggestions hidden"></div>
+            <button class="search-button">Search</button>
+            <a id="closeSearch" class="close-button">Close</a>
+        </div>
+    </nav>
     <div class="container">
-        <nav class="navbar">
-            <div class="navbar-brand">
-                <img src="https://static.rentbyowner.com/release/28.0.6/static/images/sites/rentbyowner.com/header_logo.svg"
-                    alt="rentbyowner logo">
-            </div>
-            <button id="searchToggle" class="navbar-toggle"><i class="fa fa-search" aria-hidden="true"></i></button>
-            <div id="searchForm" class="search-form hidden">
-                <input type="text" placeholder="Search..." />
-                <input type="text" placeholder="Select a date" />
-                <input type="text" placeholder="Guests" />
-                <button class="search-button">Search</button>
-                <a id="closeSearch" class="close-button">Close</a>
-            </div>
-        </nav>
         <div id="properties" class="properties-container">
             <!-- Cards will be dynamically rendered here -->
             {{range .properties}}
@@ -61,17 +60,24 @@
                         <span>{{.}}</span>
                         {{end}}
                     </div>
+                    {{range .properties}}
                     <div class="info">
-                        <div class="location-breadcrumb">
-                            <a href="#">{{$.City}}</a>
-                            <span class="separator">></span>
-                            <a href="#">{{$.Area}}</a>
+                        {{range .details}}
+                        <div class="detail-info">
+                            <div class="location-breadcrumb">
+                                <a href="#">{{.City}}</a>
+                                <span class="separator">></span>
+                                <a href="#">{{.Area}}</a>
+                            </div>
                         </div>
+                        {{end}}
                     </div>
+                    {{end}}
                     <div class="tiles-btn">
                         <div class="website-btn col-xs-5 col-sm-5 col-md-6">
                             <a href="#">
-                                <img src="https://static.rentbyowner.com/release/28.0.6/static/images/booking.svg" alt="Booking.com">
+                                <img src="https://static.rentbyowner.com/release/28.0.6/static/images/booking.svg"
+                                    alt="Booking.com">
                             </a>
                         </div>
                         <div class="availability-btn col-sm-7 col-md-6">

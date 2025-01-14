@@ -23,8 +23,8 @@
         </div>
         <button id="searchToggle" class="navbar-toggle"><i class="fa fa-search" aria-hidden="true"></i></button>
         <div id="searchForm" class="search-form hidden">
-            <input type="text" placeholder="Search..." />
-            <input type="text" placeholder="Select a date" />
+            <input id="searchInput" type="text" placeholder="Search locations..." autocomplete="off"/>
+            <div id="autocompleteSuggestions" class="autocomplete-suggestions hidden"></div>
             <button class="search-button">Search</button>
             <a id="closeSearch" class="close-button">Close</a>
         </div>
