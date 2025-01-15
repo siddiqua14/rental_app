@@ -86,9 +86,9 @@ func (c *PropertyListController) Get() {
                                 detailMap["Amenities"] = amenities
                             }
 
-                            // Rename HotelID to PropertyID
-                            if hotelID, ok := detailMap["HotelID"].(string); ok {
-                                detailMap["PropertyID"] = hotelID
+                            // Rename IDHotel to PropertyID
+                            if idHotel, ok := detailMap["IDHotel"].(string); ok {
+                                detailMap["PropertyID"] = idHotel
                             }
                         }
                     }

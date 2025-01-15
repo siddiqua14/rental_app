@@ -24,14 +24,17 @@ func (c *PropertyDetailsController) Get() {
         return
     }
 
-    // Convert IDHotel to an integer
-    idHotel, err := strconv.Atoi(idHotelStr)
+    // Convert IDHotel to a float first (to handle scientific notation)
+    idHotelFloat, err := strconv.ParseFloat(idHotelStr, 64)
     if err != nil {
-        log.Printf("Error converting IDHotel to integer: %v", err)
+        log.Printf("Error converting IDHotel to float: %v", err)
         c.Data["error"] = "Invalid IDHotel format"
         c.TplName = "property_details.tpl" // Render the error in the template
         return
     }
+
+    // Convert float to integer (to ensure it's a valid integer)
+    idHotel := int(idHotelFloat)
 
     // API URL to fetch the property details
     apiURL := "http://localhost:8080/v1/property/details"
@@ -73,6 +76,7 @@ func (c *PropertyDetailsController) Get() {
             break
         }
     }
+
 
     // If a matching property is found, pass it to the template
     if matchedProperty != nil {

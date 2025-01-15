@@ -56,7 +56,7 @@
                         <div class="property-type">{{.PropertyType}}</div>
                     </div>
                     <div class="property-name">
-                        <a href="/property/details/{{printf "%.0f" .IDHotel}}" target="_blank">{{.HotelName}}</a>
+                        <a href="/property/details/{{.IDHotel}}" target="_blank">{{.HotelName}}</a>
                     </div>
 
                     <div class="features">
