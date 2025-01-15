@@ -24,7 +24,7 @@
         </div>
         <div id="locationDropdown" class="hidden"></div>
 
-        
+
     </nav>
     <div class="container">
         <div id="dataContainer" class="properties-container">
@@ -68,7 +68,7 @@
                     <div class="location-wrapper">
                         <span class="location location-span">{{.Location}}</span>
                     </div>
-                    
+
                     <div class="tiles-btn">
                         <div class="website-btn col-xs-5 col-sm-5 col-md-6">
                             <a href="#">

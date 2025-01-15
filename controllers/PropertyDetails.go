@@ -65,9 +65,10 @@ func (c *PropertyDetailsController) Get() {
         return
     }
 
+    // Find the property matching the HotelID
     var matchedProperty map[string]interface{}
     for _, property := range properties {
-        if idHotel, ok := property["IDHotel"].(int); ok && idHotel == hotelID {
+        if idHotel, ok := property["IDHotel"].(float64); ok && int(idHotel) == hotelID {
             matchedProperty = property
             break
         }
