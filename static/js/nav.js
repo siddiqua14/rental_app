@@ -136,6 +136,7 @@ function updateURLAndDisplayData(locationValue) {
             console.error('Error fetching data:', error);
         });
 }
+
 // Function to update the property cards in the container
 function updatePropertyContainer(properties) {
     const propertiesContainer = document.getElementById('properties');
