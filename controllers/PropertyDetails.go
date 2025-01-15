@@ -15,20 +15,20 @@ type PropertyDetailsController struct {
 }
 
 func (c *PropertyDetailsController) Get() {
-    // Get the HotelID from the URL parameters
-    hotelIDStr := c.Ctx.Input.Param(":hotelID")
-    if hotelIDStr == "" {
-        log.Println("HotelID parameter is missing")
-        c.Data["error"] = "HotelID is required"
+    // Get the IDHotel from the URL parameters
+    idHotelStr := c.Ctx.Input.Param(":idHotel")
+    if idHotelStr == "" {
+        log.Println("IDHotel parameter is missing")
+        c.Data["error"] = "IDHotel is required"
         c.TplName = "property_details.tpl" // Render the error in the template
         return
     }
 
-    // Convert hotelID to an integer
-    hotelID, err := strconv.Atoi(hotelIDStr)
+    // Convert IDHotel to an integer
+    idHotel, err := strconv.Atoi(idHotelStr)
     if err != nil {
-        log.Printf("Error converting HotelID to integer: %v", err)
-        c.Data["error"] = "Invalid HotelID format"
+        log.Printf("Error converting IDHotel to integer: %v", err)
+        c.Data["error"] = "Invalid IDHotel format"
         c.TplName = "property_details.tpl" // Render the error in the template
         return
     }
@@ -65,10 +65,10 @@ func (c *PropertyDetailsController) Get() {
         return
     }
 
-    // Find the property matching the HotelID
+    // Find the property matching the IDHotel
     var matchedProperty map[string]interface{}
     for _, property := range properties {
-        if idHotel, ok := property["IDHotel"].(float64); ok && int(idHotel) == hotelID {
+        if id, ok := property["IDHotel"].(float64); ok && int(id) == idHotel {
             matchedProperty = property
             break
         }
@@ -97,12 +97,12 @@ func (c *PropertyDetailsController) Get() {
             c.Data["breadcrumb"] = breadcrumb
             c.TplName = "property_details.tpl" // Render the template with the property details
         } else {
-            log.Printf("Location data is missing for HotelID %d", hotelID)
+            log.Printf("Location data is missing for IDHotel %d", idHotel)
             c.Data["error"] = "Location data is missing"
             c.TplName = "property_details.tpl" // Render the error in the template
         }
     } else {
-        log.Printf("Property not found for HotelID %d", hotelID)
+        log.Printf("Property not found for IDHotel %d", idHotel)
         c.Data["error"] = "Property not found"
         c.TplName = "property_details.tpl" // Render the error in the template
     }

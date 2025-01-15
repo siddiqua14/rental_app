@@ -12,7 +12,7 @@ func init() {
 		web.NSRouter("/list", &controllers.PropertyListController{}),
 		web.NSRouter("/location", &controllers.PropertyLocController{}),
 		web.NSRouter("/:location", &controllers.GetLocationController{}),
-		web.NSRouter("/details/:hotelID", &controllers.PropertyDetailsController{}),
+		web.NSRouter("/details/:idHotel", &controllers.PropertyDetailsController{}),
 	)
 
 	

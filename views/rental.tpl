@@ -24,7 +24,7 @@
         </div>
         <div id="locationDropdown" class="hidden"></div>
 
-
+        
     </nav>
     <div class="container">
         <div id="dataContainer" class="properties-container">
@@ -56,7 +56,7 @@
                         <div class="property-type">{{.PropertyType}}</div>
                     </div>
                     <div class="property-name">
-                        <a href="/property/details/{{.IDHotel}}" target="_blank">{{.HotelName}}</a>
+                        <a href="/property/details/{{printf "%.0f" .IDHotel}}" target="_blank">{{.HotelName}}</a>
                     </div>
 
                     <div class="features">
@@ -68,7 +68,7 @@
                     <div class="location-wrapper">
                         <span class="location location-span">{{.Location}}</span>
                     </div>
-
+                    
                     <div class="tiles-btn">
                         <div class="website-btn col-xs-5 col-sm-5 col-md-6">
                             <a href="#">
