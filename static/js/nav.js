@@ -55,6 +55,7 @@ document.getElementById('searchInput').addEventListener('input', function () {
         .catch(() => hideLocationDropdown());
 });
 
+
 // Search location logic
 function searchLocations() {
     const query = document.getElementById('searchInput').value.trim(); // Get user input
@@ -102,6 +103,7 @@ function hideLocationDropdown() {
     dropdown.classList.add('hidden');
 }
 
+// When a location is selected
 function selectLocation(locationValue) {
     const searchInput = document.getElementById('searchInput');
     const dropdown = document.getElementById('locationDropdown');
@@ -109,7 +111,11 @@ function selectLocation(locationValue) {
     // Set the selected location value in the search input
     searchInput.value = locationValue;
 
-    // Update the URL and fetch data based on the selected location
+    // Update the URL with the new location
+    const encodedLocation = encodeURIComponent(locationValue);
+    window.history.pushState({}, "", `/property/${encodedLocation}`);
+
+    // Fetch the new data based on the location
     updateURLAndDisplayData(locationValue);
 
     // Hide the dropdown
@@ -117,101 +123,82 @@ function selectLocation(locationValue) {
     dropdown.innerHTML = ''; // Clear dropdown content
 }
 
+// Function to handle AJAX and update the container with new data
+function updateURLAndDisplayData(locationValue) {
+    fetch(`/property/data/${encodeURIComponent(locationValue)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data && Array.isArray(data)) {
+                updatePropertyContainer(data); // Call updatePropertyContainer with the fetched data
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
+// Function to update the property cards in the container
+function updatePropertyContainer(properties) {
+    const propertiesContainer = document.getElementById('properties');
+    propertiesContainer.innerHTML = ''; // Clear the previous properties
+
+    // Loop over the new properties and render the cards
+    properties.forEach(property => {
+        const propertyCard = document.createElement('div');
+        propertyCard.classList.add('property-card');
+
+        propertyCard.innerHTML = `
+            <div class="image-container">
+                <div class="image-slider">
+                    ${property.Gallery.map(image => `<img src="${image}" alt="Property Image" class="property-image">`).join('')}
+                </div>
+                <div class="price-tag">From ${property.Price}</div>
+                <div class="action-buttons">
+                    <div class="action-button" title="View"><i class="fa fa-eye"></i></div>
+                    <div class="action-button" title="Location"><i class="fa fa-map-marker"></i></div>
+                    <div class="action-button" title="Save"><i class="fa fa-heart-o"></i></div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="rating">
+                    <span class="rating-badge">${property.Rating}</span>
+                    <span class="reviews">(${property.ReviewCount} Reviews)</span>
+                    <span class="property-type">${property.PropertyType}</span>
+                </div>
+                <div class="property-name">
+                    <a href="/property/details/${property.IDHotel}" target="_blank">${property.HotelName}</a>
+                </div>
+                <div class="features">
+                    ${property.Amenities.map(amenity => `<span>•</span><span>${amenity}</span>`).join('')}
+                </div>
+                <div class="location-wrapper">
+                    <span class="location location-span">${property.Location}</span>
+                </div>
+                <div class="tiles-btn">
+                    <div class="website-btn">
+                        <a href="#"><img src="https://static.rentbyowner.com/release/28.0.6/static/images/booking.svg" alt="Booking.com"></a>
+                    </div>
+                    <div class="availability-btn col-sm-7 col-md-6">
+                        <div class="view">
+                            <a href="#">View Availability</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        propertiesContainer.appendChild(propertyCard);
+    });
+}
 // Event listener to close the search form
 function closeSearch() {
     document.getElementById('searchForm').classList.add('hidden');
     hideLocationDropdown(); // Hide the dropdown when closing the form
 }
-// Handle back/forward navigation
-window.addEventListener('popstate', () => {
-    const location = decodeURIComponent(window.location.pathname.split('/')[2]);
-    if (location) {
-        updateURLAndDisplayData(location);
-    }
-});
-
-// Update URL and fetch data based on selected location
-function updateURLAndDisplayData(locationValue) {
-    const encodedLocation = encodeURIComponent(locationValue);
-    window.history.pushState({}, "", `/property/${encodedLocation}`);
-
-    fetch(`/property/${encodedLocation}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data) {
-                displayPropertyCards(data);
-            } else {
-                console.error('Error fetching data for location:', data);
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching location data:', error);
-        });
-}
-
-// Render property cards dynamically
-function displayPropertyCards(data) {
-    const dataContainer = document.getElementById('dataContainer');
-    dataContainer.innerHTML = '';
-
-    if (Array.isArray(data) && data.length > 0) {
-        data.forEach(property => {
-            Object.keys(property).forEach(key => {
-                const details = property[key];
-                const card = document.createElement('div');
-                card.className = 'property-card';
-
-                card.innerHTML = `
-                    <div class="image-container">
-                        <div class="image-slider">
-                            ${property.Gallery.map(img => `
-                                <img src="${img}" alt="Property Image" class="property-image">
-                            `).join('')}
-                        </div>
-                        <div class="price-tag">From ${property.Price}</div>
-                        <div class="action-buttons">
-                            <div class="action-button" title="View"><i class="fa fa-eye"></i></div>
-                            <div class="action-button" title="Location"><i class="fa fa-map-marker"></i></div>
-                            <div class="action-button" title="Save"><i class="fa fa-heart-o"></i></div>
-                        </div>
-                    </div>
-                    <div class="content">
-                        <div class="rating">
-                            <span class="rating-badge">${property.Rating}</span>
-                            <span class="reviews">(${property.ReviewCount} Reviews)</span>
-                            <span class="property-type">${property.PropertyType}</span>
-                        </div>
-                        <div class="property-name">
-                            <a href="/property/details/${property.IDHotel}" target="_blank">${property.HotelName}</a>
-                        </div>
-                        <div class="location">${property.Location}</div>
-                        <div class="features">
-                            ${property.Amenities.map(amenity => `<span class="feature-item">${amenity}</span>`).join('')}
-                        </div>
-                    </div>
-                `;
-                dataContainer.appendChild(card);
-            });
-        });
-    } else {
-        dataContainer.innerHTML = '<p class="text-gray-500">No properties available for this location.</p>';
-    }
-}
-
 // Handle popstate event to manage back and forward buttons without reload
 window.addEventListener('popstate', function(event) {
     const location = window.location.pathname.split('/')[2];
     if (location) {
-        fetch(`/property/${location}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data) {
-                    displayLocationData(data); // Display data dynamically when navigating via history
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching location data on back/forward:', error);
-            });
+        updateURLAndDisplayData(location); // Call the function with the current location
     }
 });
-
