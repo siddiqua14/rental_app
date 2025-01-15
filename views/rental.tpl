@@ -65,19 +65,10 @@
                         <span>{{.}}</span>
                         {{end}}
                     </div>
-                    {{range .properties}}
                     <div class="location-wrapper">
-                        {{range .details}}
-                        <div class="detail-info">
-                            <div class="location-breadcrumb">
-                                <a href="#">{{.City}}</a>
-                                <span class="separator">></span>
-                                <a href="#">{{.Area}}</a>
-                            </div>
-                        </div>
-                        {{end}}
+                        <span class="location location-span">{{.Location}}</span>
                     </div>
-                    {{end}}
+                    
                     <div class="tiles-btn">
                         <div class="website-btn col-xs-5 col-sm-5 col-md-6">
                             <a href="#">
@@ -100,6 +91,7 @@
         </div>
         <button id="view-more-btn" class="view-more-btn" onclick="loadMoreProperties()">View More</button>
     </div>
+    <script src="/static/js/nav.js"></script>
     <script src="/static/js/property-card.js"></script>
 
 </body>

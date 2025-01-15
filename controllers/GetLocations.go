@@ -51,7 +51,9 @@ func (c *GetLocationController) Get() {
                 filteredLocations = append(filteredLocations, loc)
             }
         }
+        
     }
+    
 
     // Set the filtered locations to the template
     if len(filteredLocations) == 0 {

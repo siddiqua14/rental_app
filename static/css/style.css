@@ -141,3 +141,20 @@
 .close-button:hover {
     background-color: #e63939;
 }
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb-item {
+    cursor: pointer;
+    color: #103076;
+    text-decoration: none;
+    font-size: 12px;
+}
+.breadcrumb-separator {
+    margin: 0 5px;
+    color: #103076;
+    font-size: 11px;
+}

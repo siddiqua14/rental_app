@@ -7,9 +7,23 @@
     <title>Locations</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/static/css/property-card.css">
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
 <body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <img src="https://static.rentbyowner.com/release/28.0.6/static/images/sites/rentbyowner.com/header_logo.svg"
+                alt="rentbyowner logo">
+        </div>
+        <button id="searchToggle" class="navbar-toggle"><i class="fa fa-search" aria-hidden="true"></i></button>
+        <div id="searchForm" class="search-form relative">
+            <input type="text" id="searchInput" placeholder="Search..." class="p-2 border rounded w-full" />
+            <button class="search-button bg-blue-500 text-white p-2 rounded">Search</button>
+            <a id="closeSearch" class="close-button text-red-500 ml-2 cursor-pointer" onclick="closeSearch()">Close</a>
+        </div>
+        <div id="locationDropdown" class="hidden"></div>
+    </nav>
     <div class="container">
         <div id="properties" class="properties-container">
             <!-- Iterate over Locations -->
@@ -47,14 +61,15 @@
                         <a href="/property/details/{{.IDHotel}}" target="_blank">{{.HotelName}}</a>
                     </div>
                     <div class="features">
-                        <!-- Render Property Amenities -->
                         {{range .Amenities}}
-                        <span class="feature-item">{{.}}</span>
+                        <span>•</span>
+                        <span>{{.}}</span>
                         {{end}}
                     </div>
                     <div class="location-wrapper">
-                        <span class="location">{{.Location}}</span>
+                        <span class="location location-span">{{.Location}}</span>
                     </div>
+                    
                     <div class="tiles-btn">
                         <div class="website-btn">
                             <a href="#"><img
@@ -74,10 +89,11 @@
 
         </div>
         <!-- Optionally render a "View More" button -->
-        <button id="view-more-btn" class="view-more-btn" onclick="loadMoreProperties()">View More</button>
+    
     </div>
-
+    <script src="/static/js/nav.js"></script>
     <script src="/static/js/locationlist.js"></script>
+
 </body>
 
 </html>

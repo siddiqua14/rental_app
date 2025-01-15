@@ -9,6 +9,7 @@
     display: flex;
     gap: 8px;
     font-size: 14px;
+    margin-bottom: 1.5rem;
 }
 
 .breadcrumb-item {
@@ -98,6 +99,12 @@
     grid-row: 1 / span 2;
     height: 410px;
     width: 450px;
+}
+.property-summary span {
+    font-size: 1rem;
+    color: #1a365d;
+    margin-bottom: 1rem;
+    
 }
 .description {
     margin-top: 20px;

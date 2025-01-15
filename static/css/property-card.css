@@ -170,26 +170,11 @@
     margin-top: 8px;
     bottom: 0;
 }
-
-.location-breadcrumb {
+.location{
     display: block;
     gap: 4px;
     align-items: center;
     font-size: 13px;
-}
-
-.location-breadcrumb a {
-    color: #0071c2;
-    text-decoration: none;
-}
-
-.location-breadcrumb span {
-    color: #0071c2;
-}
-
-.location-breadcrumb .separator {
-    color: #0071c2;
-    font-size: 12px;
 }
 
 

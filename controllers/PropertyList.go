@@ -74,15 +74,7 @@ func (c *PropertyListController) Get() {
                 if details, ok := propMap["details"].([]interface{}); ok {
                     for _, detail := range details {
                         if detailMap, ok := detail.(map[string]interface{}); ok {
-                          
-                            // Split location into city and area
-                            if location, ok := detailMap["Location"].(string); ok {
-                                parts := strings.Split(location, ", ")
-                                if len(parts) == 2 {
-                                    detailMap["City"] = strings.TrimSpace(parts[1]) // New York
-                                    detailMap["Area"] = strings.TrimSpace(parts[0]) // Manhattan
-                                }
-                            }
+                        
 
                             // Singularize PropertyType
                             if propertyType, ok := detailMap["PropertyType"].(string); ok {

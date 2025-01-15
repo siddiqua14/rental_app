@@ -7,6 +7,12 @@ import (
 	
 )
 
+func init() {
+	// Register the custom function globally
+	web.AddFuncMap("split", func(s string) []string {
+		return strings.Split(s, ", ")
+	})
+}
 
 func main() {
 	// Set static path for serving CSS, JS, and other static files

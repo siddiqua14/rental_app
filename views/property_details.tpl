@@ -82,7 +82,7 @@
             {{end}}
         </div>
         <div class="property-summary">
-            <span>{{.property.Bedrooms}} {{trimSuffix .property.PropertyType "s"}} Apartment in
+            <span>{{.property.Bedrooms}} Bedroom {{trimSuffix .property.PropertyType "s"}}  in
                 {{.property.Location}}</span>
         </div>
         <div class="description">

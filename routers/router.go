@@ -6,10 +6,15 @@ import (
 )
 
 func init() {
-	web.Router("/property/list", &controllers.PropertyListController{})
-	web.Router("/property/location", &controllers.PropertyLocController{})
-	web.Router("/property/:location", &controllers.GetLocationController{})
+	
+	ns := web.NewNamespace("/property",
+		
+		web.NSRouter("/list", &controllers.PropertyListController{}),
+		web.NSRouter("/location", &controllers.PropertyLocController{}),
+		web.NSRouter("/:location", &controllers.GetLocationController{}),
+		web.NSRouter("/details/:hotelID", &controllers.PropertyDetailsController{}),
+	)
 
-	//web.Router("/property/details", &controllers.PropertyDetailsController{})
-	web.Router("/property/details/:hotelID", &controllers.PropertyDetailsController{})
+	
+	web.AddNamespace(ns)
 }
